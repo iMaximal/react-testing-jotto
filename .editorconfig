@@ -9,10 +9,6 @@ insert_final_newline = true
 max_line_length = 180
 trim_trailing_whitespace = true
 
-[*.styl]
-indent_size = 4
-indent_style = tabs
-
 [*.yml]
 indent_size = 2
 indent_style = space
