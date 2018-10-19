@@ -6,6 +6,7 @@ export const actionTypes = {
     CORRECT_GUESS: 'CORRECT_GUESS',
     GUESS_WORD: 'GUESS_WORD',
     SET_SECRET_WORD: 'SET_SECRET_WORD',
+    FETCHED_ERROR: 'FETCHED_ERROR',
 };
 
 /**
@@ -16,6 +17,7 @@ export const actionTypes = {
  * @returns {function} - Redux Thunk function.
  */
 export const guessWord = (guessedWord) => {
+    if (!guessedWord) return;
     return function (dispatch, getState) {
         const secretWord = getState().secretWord;
         const letterMatchCount = getLetterMatchCount(guessedWord, secretWord);
@@ -40,6 +42,12 @@ export const getSecretWord = () => {
                     type: actionTypes.SET_SECRET_WORD,
                     payload: response.data,
                 });
+            })
+            .catch((error) => {
+                dispatch({
+                    type: actionTypes.FETCHED_ERROR,
+                    payload: error,
+                })
             });
     };
 };

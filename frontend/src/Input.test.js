@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { findByTestAttr, storeFactory } from '../test/testUtils';
-import Input from './Input';
+import Input, { UnconnectedInput } from './Input';
 
 /**
  * Factory function to create a ShallowWrapper for the Input component.
@@ -78,4 +78,40 @@ describe('redux props', () => {
         const guessWordProp = wrapper.instance().props.guessWord;
         expect(guessWordProp).toBeInstanceOf(Function);
     });
+});
+
+describe('`guessWord` action creator', () => {
+    let guessWordMock;
+    let wrapper;
+    const guessedWord = 'train';
+
+    beforeEach(() => {
+        // create a mock function for `getSecretWord`
+        guessWordMock = jest.fn();
+
+        // set up Input, with guessWordMock as a prop
+        wrapper = shallow(<UnconnectedInput guessWord={guessWordMock} />);
+
+        // simulate the input
+        wrapper.instance().inputBox.current = { value: guessedWord };
+
+        // simulate click on submit button
+        const submit = findByTestAttr(wrapper, 'submit-button');
+        submit.simulate('click', { preventDefault() {} });
+    });
+
+    test('`guessWord` was called once', () => {
+        const guessWordCallCount = guessWordMock.mock.calls.length;
+        expect(guessWordCallCount).toBe(1);
+    });
+
+    test('`guessWord` was called with input value as argument', () => {
+        const guessedWordArg = guessWordMock.mock.calls[0][0];
+        expect(guessedWordArg).toBe(guessedWord);
+    });
+
+    test('input box clears on submit', () => {
+        expect(wrapper.instance().inputBox.current.value).toBe('');
+    })
+
 });
